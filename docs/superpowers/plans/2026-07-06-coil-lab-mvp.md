@@ -1,4 +1,4 @@
-# Taiwan Stock Momentum MVP Implementation Plan
+# CoilLab MVP Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -15,14 +15,10 @@
 Create and implement the project in:
 
 ```text
-/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp
+.
 ```
 
-This folder has already been created. The current planning workspace remains:
-
-```text
-/Users/hsuhaoche/Documents/Codex/2026-07-06/superpowers-plugin-superpowers-openai-curated-remote-2
-```
+This folder has already been created. The implementation plan now lives inside this repository.
 
 The user preference says not to proactively run `git commit`, `git push`, `git reset`, or `git checkout`. Do not include commit steps in execution. If version control is needed, only suggest read-only checks or ask the user to run git commands themselves.
 
@@ -74,14 +70,14 @@ Responsibilities:
 ## Task 1: Scaffold Project
 
 **Files:**
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/package.json`
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/index.html`
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/vite.config.ts`
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/tsconfig.json`
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/tsconfig.node.json`
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/main.tsx`
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/App.tsx`
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/styles.css`
+- Create: `package.json`
+- Create: `index.html`
+- Create: `vite.config.ts`
+- Create: `tsconfig.json`
+- Create: `tsconfig.node.json`
+- Create: `src/main.tsx`
+- Create: `src/App.tsx`
+- Create: `src/styles.css`
 
 - [ ] **Step 1: Create the Vite project files**
 
@@ -89,7 +85,7 @@ Create `package.json`:
 
 ```json
 {
-  "name": "taiwan-stock-momentum-mvp",
+  "name": "coil-lab",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -275,7 +271,7 @@ select {
 Run:
 
 ```bash
-cd /Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp
+cd .
 npm install
 ```
 
@@ -286,7 +282,7 @@ Expected: `node_modules` and `package-lock.json` are created without errors.
 Run:
 
 ```bash
-cd /Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp
+cd .
 npm run build
 ```
 
@@ -295,8 +291,8 @@ Expected: TypeScript and Vite build complete successfully.
 ## Task 2: Define Domain Types and Config
 
 **Files:**
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/domain/types.ts`
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/domain/config.ts`
+- Create: `src/domain/types.ts`
+- Create: `src/domain/config.ts`
 
 - [ ] **Step 1: Create shared types**
 
@@ -416,7 +412,7 @@ export function classifyScore(score: number) {
 Run:
 
 ```bash
-cd /Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp
+cd .
 npm run build
 ```
 
@@ -425,10 +421,10 @@ Expected: build succeeds.
 ## Task 3: Implement Data Validation With Tests
 
 **Files:**
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/test/setup.ts`
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/test/fixtures.ts`
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/domain/validation.test.ts`
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/domain/validation.ts`
+- Create: `src/test/setup.ts`
+- Create: `src/test/fixtures.ts`
+- Create: `src/domain/validation.test.ts`
+- Create: `src/domain/validation.ts`
 
 - [ ] **Step 1: Add test setup and fixtures**
 
@@ -504,7 +500,7 @@ describe('validateRows', () => {
 Run:
 
 ```bash
-cd /Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp
+cd .
 npm test -- src/domain/validation.test.ts
 ```
 
@@ -567,7 +563,7 @@ export function validateRows(inputRows: OhlcvRow[]): DataValidationResult {
 Run:
 
 ```bash
-cd /Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp
+cd .
 npm test -- src/domain/validation.test.ts
 ```
 
@@ -576,8 +572,8 @@ Expected: all validation tests pass.
 ## Task 4: Implement Indicators With Tests
 
 **Files:**
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/domain/indicators.test.ts`
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/domain/indicators.ts`
+- Create: `src/domain/indicators.test.ts`
+- Create: `src/domain/indicators.ts`
 
 - [ ] **Step 1: Write failing indicator tests**
 
@@ -610,7 +606,7 @@ describe('indicators', () => {
 Run:
 
 ```bash
-cd /Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp
+cd .
 npm test -- src/domain/indicators.test.ts
 ```
 
@@ -706,7 +702,7 @@ function round(value: number): number {
 Run:
 
 ```bash
-cd /Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp
+cd .
 npm test -- src/domain/indicators.test.ts
 ```
 
@@ -715,8 +711,8 @@ Expected: all indicator tests pass.
 ## Task 5: Implement Scoring With Tests
 
 **Files:**
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/domain/scoring.test.ts`
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/domain/scoring.ts`
+- Create: `src/domain/scoring.test.ts`
+- Create: `src/domain/scoring.ts`
 
 - [ ] **Step 1: Write failing scoring tests**
 
@@ -774,7 +770,7 @@ describe('scoreTechnicals', () => {
 Run:
 
 ```bash
-cd /Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp
+cd .
 npm test -- src/domain/scoring.test.ts
 ```
 
@@ -910,7 +906,7 @@ function display(value: number | null): string {
 Run:
 
 ```bash
-cd /Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp
+cd .
 npm test -- src/domain/scoring.test.ts
 ```
 
@@ -919,9 +915,9 @@ Expected: all scoring tests pass.
 ## Task 6: Implement Report Orchestration and CSV Parsing
 
 **Files:**
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/domain/report.test.ts`
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/domain/report.ts`
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/domain/csv.ts`
+- Create: `src/domain/report.test.ts`
+- Create: `src/domain/report.ts`
+- Create: `src/domain/csv.ts`
 
 - [ ] **Step 1: Write failing report tests**
 
@@ -955,7 +951,7 @@ describe('analyzeRows', () => {
 Run:
 
 ```bash
-cd /Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp
+cd .
 npm test -- src/domain/report.test.ts
 ```
 
@@ -1048,7 +1044,7 @@ export function parseCsvText(text: string): Promise<OhlcvRow[]> {
 Run:
 
 ```bash
-cd /Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp
+cd .
 npm test -- src/domain/report.test.ts
 ```
 
@@ -1057,8 +1053,8 @@ Expected: all report tests pass.
 ## Task 7: Add Built-In Samples
 
 **Files:**
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/domain/sampleData.ts`
-- Modify: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/test/fixtures.ts`
+- Create: `src/domain/sampleData.ts`
+- Modify: `src/test/fixtures.ts`
 
 - [ ] **Step 1: Extend fixtures with deterministic sample shapes**
 
@@ -1133,7 +1129,7 @@ export const builtInSamples: BuiltInSample[] = [
 Run:
 
 ```bash
-cd /Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp
+cd .
 npm test -- src/domain
 ```
 
@@ -1142,11 +1138,11 @@ Expected: all domain tests pass.
 ## Task 8: Build UI Components
 
 **Files:**
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/components/InputPanel.tsx`
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/components/ResultSummary.tsx`
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/components/RuleDetails.tsx`
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/components/PriceVolumeChart.tsx`
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/components/ValidationPanel.tsx`
+- Create: `src/components/InputPanel.tsx`
+- Create: `src/components/ResultSummary.tsx`
+- Create: `src/components/RuleDetails.tsx`
+- Create: `src/components/PriceVolumeChart.tsx`
+- Create: `src/components/ValidationPanel.tsx`
 
 - [ ] **Step 1: Create InputPanel**
 
@@ -1372,8 +1368,8 @@ export function ValidationPanel({ samples }: { samples: BuiltInSample[] }) {
 ## Task 9: Wire the App and Styles
 
 **Files:**
-- Modify: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/App.tsx`
-- Modify: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/styles.css`
+- Modify: `src/App.tsx`
+- Modify: `src/styles.css`
 
 - [ ] **Step 1: Replace App with integrated workbench**
 
@@ -1713,7 +1709,7 @@ td {
 ## Task 10: Add App Smoke Test
 
 **Files:**
-- Create: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/App.test.tsx`
+- Create: `src/App.test.tsx`
 
 - [ ] **Step 1: Write smoke test**
 
@@ -1742,7 +1738,7 @@ describe('App', () => {
 Run:
 
 ```bash
-cd /Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp
+cd .
 npm test
 ```
 
@@ -1751,15 +1747,15 @@ Expected: all tests pass.
 ## Task 11: Final Verification
 
 **Files:**
-- Read: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/package.json`
-- Read: `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp/src/App.tsx`
+- Read: `package.json`
+- Read: `src/App.tsx`
 
 - [ ] **Step 1: Run build**
 
 Run:
 
 ```bash
-cd /Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp
+cd .
 npm run build
 ```
 
@@ -1770,7 +1766,7 @@ Expected: build succeeds and `dist/` is produced.
 Run:
 
 ```bash
-cd /Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp
+cd .
 npm run dev
 ```
 
@@ -1823,5 +1819,5 @@ Type consistency:
 Execution notes:
 
 - Installing dependencies requires network access.
-- Writing to `/Users/hsuhaoche/Desktop/shit/taiwan-stock-momentum-mvp` may require elevated filesystem permission outside the sandbox.
+- Writing to `.` may require elevated filesystem permission outside the sandbox.
 - Do not run mutating git commands unless the user explicitly asks.

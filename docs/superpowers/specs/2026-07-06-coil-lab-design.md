@@ -1,4 +1,4 @@
-# Taiwan Stock Momentum MVP Design
+# CoilLab MVP Design
 
 ## Purpose
 
