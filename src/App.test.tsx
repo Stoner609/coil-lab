@@ -42,7 +42,9 @@ describe('App', () => {
     expect(screen.getByRole('heading', { name: '台股波段強勢股判斷工具' })).toBeInTheDocument();
     expect(screen.getByLabelText('輸入資料')).toBeInTheDocument();
     expect(screen.getByLabelText('結果摘要')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '交易決策輔助' })).toBeInTheDocument();
     expect(screen.getByLabelText('條件明細')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '訊號驗證回測' })).toBeInTheDocument();
     expect(screen.getByLabelText('樣本驗證')).toBeInTheDocument();
   });
 

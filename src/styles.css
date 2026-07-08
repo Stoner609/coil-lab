@@ -228,6 +228,93 @@ dd {
   min-height: 430px;
 }
 
+.trader-decision-panel,
+.signal-validation-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.metric-card {
+  border: 1px solid #d9e0e4;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fbfcfd;
+}
+
+.metric-card span {
+  display: block;
+  color: #5d6b73;
+  font-size: 13px;
+}
+
+.metric-card strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 18px;
+}
+
+.setup-state {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #d9e0e4;
+  border-radius: 8px;
+}
+
+.setup-state span {
+  color: #34454f;
+}
+
+.setup-state-actionable {
+  background: #edf8f1;
+}
+
+.setup-state-watch {
+  background: #fff8e5;
+}
+
+.setup-state-extended,
+.setup-state-avoid {
+  background: #fff0f0;
+}
+
+.note-block h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+}
+
+.note-block ul,
+.compact-notes {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.note-block p {
+  margin: 0;
+  color: #53636d;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.table-wrap table {
+  min-width: 620px;
+}
+
+.table-wrap th,
+.table-wrap td {
+  white-space: nowrap;
+}
+
 .error-message {
   margin: 0;
   border: 1px solid #d99b8c;

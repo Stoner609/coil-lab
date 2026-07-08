@@ -71,3 +71,60 @@ export interface MomentumReport {
   dataNotes: string[];
   rows: OhlcvRow[];
 }
+
+export type SetupState = 'actionable' | 'watch' | 'extended' | 'avoid';
+
+export interface RiskRewardEstimate {
+  entryReference: number;
+  invalidationLevel: number | null;
+  targetReference: number | null;
+  riskPct: number | null;
+  rewardPct: number | null;
+  rewardRiskRatio: number | null;
+}
+
+export interface TraderDecision {
+  setupState: SetupState;
+  headline: string;
+  confidenceNotes: string[];
+  blockers: string[];
+  unavailableData: string[];
+  riskReward: RiskRewardEstimate;
+}
+
+export interface ForwardReturns {
+  day5: number | null;
+  day10: number | null;
+  day20: number | null;
+  day40: number | null;
+  day60: number | null;
+}
+
+export interface SignalBacktestResult {
+  signalDate: string;
+  signalClose: number;
+  displayScore: number;
+  classification: Classification;
+  forwardReturns: ForwardReturns;
+  maxFavorable20: number | null;
+  maxFavorable60: number | null;
+  maxAdverse20: number | null;
+  maxAdverse60: number | null;
+  invalidationTouched20: boolean | null;
+}
+
+export interface SignalBacktestSummary {
+  signalCount: number;
+  averageReturn20: number | null;
+  medianReturn20: number | null;
+  winRate20: number | null;
+  averageMaxAdverse20: number | null;
+  bestReturn20: number | null;
+  worstReturn20: number | null;
+}
+
+export interface SignalBacktestReport {
+  signals: SignalBacktestResult[];
+  summary: SignalBacktestSummary;
+  notes: string[];
+}

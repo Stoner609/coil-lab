@@ -3,8 +3,13 @@ import { InputPanel } from './components/InputPanel';
 import { PriceVolumeChart } from './components/PriceVolumeChart';
 import { ResultSummary } from './components/ResultSummary';
 import { RuleDetails } from './components/RuleDetails';
+import { SignalValidationPanel } from './components/SignalValidationPanel';
+import { TraderDecisionPanel } from './components/TraderDecisionPanel';
 import { ValidationPanel } from './components/ValidationPanel';
+import { runSignalBacktest } from './domain/backtest';
 import { parseCsvText } from './domain/csv';
+import { buildTraderDecision } from './domain/decision';
+import { calculateIndicators } from './domain/indicators';
 import { fetchTwseIndexRows, fetchTwseStockRows, normalizeStockCode } from './domain/marketData';
 import { analyzeRows } from './domain/report';
 import { builtInSamples } from './domain/sampleData';
@@ -24,6 +29,12 @@ export default function App() {
   const activeRows = customRows ?? selectedSample.rows;
 
   const report = useMemo(() => analyzeRows(activeName, activeRows, customIndexRows ?? undefined), [activeName, activeRows, customIndexRows]);
+  const snapshot = useMemo(() => calculateIndicators(activeRows), [activeRows]);
+  const traderDecision = useMemo(() => buildTraderDecision(report, snapshot), [report, snapshot]);
+  const backtest = useMemo(
+    () => runSignalBacktest(activeRows, customIndexRows ?? undefined),
+    [activeRows, customIndexRows],
+  );
 
   async function handleCsvText(fileName: string, text: string) {
     try {
@@ -102,8 +113,10 @@ export default function App() {
 
         <section className="content-grid">
           <ResultSummary report={report} />
+          <TraderDecisionPanel decision={traderDecision} />
           {report.rows.length > 0 && <PriceVolumeChart rows={report.rows} />}
           <RuleDetails report={report} />
+          <SignalValidationPanel backtest={backtest} />
           <ValidationPanel samples={builtInSamples} />
         </section>
       </div>
