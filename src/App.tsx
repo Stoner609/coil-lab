@@ -3,34 +3,47 @@ import { InputPanel } from './components/InputPanel';
 import { PriceVolumeChart } from './components/PriceVolumeChart';
 import { ResultSummary } from './components/ResultSummary';
 import { RuleDetails } from './components/RuleDetails';
+import { ChipFundamentalPanel } from './components/ChipFundamentalPanel';
 import { SignalValidationPanel } from './components/SignalValidationPanel';
 import { TraderDecisionPanel } from './components/TraderDecisionPanel';
 import { ValidationPanel } from './components/ValidationPanel';
 import { runSignalBacktest } from './domain/backtest';
+import { scoreChipFlow } from './domain/chipScoring';
 import { parseCsvText } from './domain/csv';
 import { buildTraderDecision } from './domain/decision';
 import { calculateIndicators } from './domain/indicators';
-import { fetchTwseIndexRows, fetchTwseStockRows, normalizeStockCode } from './domain/marketData';
+import { fetchFinMindIndexRows, fetchFinMindStockRows } from './domain/finMindData';
+import { fetchFinMindFundamental } from './domain/fundamentalData';
+import { fetchFinMindChipRows } from './domain/finMindChipData';
+import { normalizeStockCode } from './domain/stockCode';
 import { analyzeRows } from './domain/report';
 import { builtInSamples } from './domain/sampleData';
-import type { OhlcvRow } from './domain/types';
+import type { ChipFlowRow, FundamentalSnapshot, OhlcvRow } from './domain/types';
 
 export default function App() {
   const [selectedSampleId, setSelectedSampleId] = useState(builtInSamples[0].id);
   const [stockCode, setStockCode] = useState('');
   const [customRows, setCustomRows] = useState<OhlcvRow[] | null>(null);
   const [customIndexRows, setCustomIndexRows] = useState<OhlcvRow[] | null>(null);
+  const [customChipRows, setCustomChipRows] = useState<ChipFlowRow[] | null>(null);
+  const [fundamental, setFundamental] = useState<FundamentalSnapshot | null>(null);
   const [customName, setCustomName] = useState('');
+  const [customStockCode, setCustomStockCode] = useState('');
   const [error, setError] = useState('');
+  const [chipWarning, setChipWarning] = useState('');
   const [isLookupLoading, setIsLookupLoading] = useState(false);
+  const [isChipLoading, setIsChipLoading] = useState(false);
 
   const selectedSample = builtInSamples.find((sample) => sample.id === selectedSampleId) ?? builtInSamples[0];
   const activeName = customRows ? customName : selectedSample.label;
   const activeRows = customRows ?? selectedSample.rows;
+  const activeChipRows = customRows ? (customChipRows ?? []) : (selectedSample.chipRows ?? []);
+  const activeChipStockCode = customRows ? customStockCode || 'custom' : selectedSample.id;
 
   const report = useMemo(() => analyzeRows(activeName, activeRows, customIndexRows ?? undefined), [activeName, activeRows, customIndexRows]);
   const snapshot = useMemo(() => calculateIndicators(activeRows), [activeRows]);
-  const traderDecision = useMemo(() => buildTraderDecision(report, snapshot), [report, snapshot]);
+  const chipReport = useMemo(() => scoreChipFlow(activeChipRows, activeChipStockCode, fundamental ?? undefined), [activeChipRows, activeChipStockCode, fundamental]);
+  const traderDecision = useMemo(() => buildTraderDecision(report, snapshot, chipReport), [report, snapshot, chipReport]);
   const backtest = useMemo(
     () => runSignalBacktest(activeRows, customIndexRows ?? undefined),
     [activeRows, customIndexRows],
@@ -39,13 +52,20 @@ export default function App() {
   async function handleCsvText(fileName: string, text: string) {
     try {
       setError('');
+      setChipWarning('');
       setCustomRows(await parseCsvText(text));
       setCustomIndexRows(null);
+      setCustomChipRows(null);
+      setFundamental(null);
       setCustomName(fileName);
+      setCustomStockCode('custom');
     } catch (csvError) {
       setCustomRows(null);
       setCustomIndexRows(null);
+      setCustomChipRows(null);
+      setFundamental(null);
       setCustomName('');
+      setCustomStockCode('');
       setError(csvError instanceof Error ? csvError.message : 'CSV 解析失敗。');
     }
   }
@@ -53,16 +73,24 @@ export default function App() {
   async function handleStockCodeLookup() {
     setIsLookupLoading(true);
     setError('');
+    setChipWarning('');
     try {
       const normalizedCode = normalizeStockCode(stockCode);
-      const [rows, indexRows] = await Promise.all([fetchTwseStockRows(normalizedCode), fetchTwseIndexRows()]);
+      const [rows, indexRows, basic] = await Promise.all([fetchFinMindStockRows(normalizedCode), fetchFinMindIndexRows(), fetchFinMindFundamental(normalizedCode)]);
       setCustomRows(rows);
       setCustomIndexRows(indexRows);
-      setCustomName(`${normalizedCode} TWSE`);
+      setCustomChipRows([]);
+      setFundamental(basic);
+      setChipWarning('為減少資料請求，籌碼資料未自動載入。');
+      setCustomName(`${normalizedCode} FinMind`);
+      setCustomStockCode(normalizedCode);
     } catch (lookupError) {
       setCustomRows(null);
       setCustomIndexRows(null);
+      setCustomChipRows(null);
+      setFundamental(null);
       setCustomName('');
+      setCustomStockCode('');
       setError(lookupError instanceof Error ? lookupError.message : '股票資料查詢失敗。');
     } finally {
       setIsLookupLoading(false);
@@ -73,8 +101,19 @@ export default function App() {
     setSelectedSampleId(sampleId);
     setCustomRows(null);
     setCustomIndexRows(null);
+    setCustomChipRows(null);
     setCustomName('');
+    setCustomStockCode('');
     setError('');
+    setChipWarning('');
+  }
+
+  async function handleLoadChip() {
+    if (!customStockCode || customStockCode === 'custom') return;
+    setIsChipLoading(true);
+    try { setCustomChipRows(await fetchFinMindChipRows(customStockCode)); setChipWarning(''); }
+    catch { setChipWarning('籌碼資料抓取失敗，暫以 unavailable 顯示。'); }
+    finally { setIsChipLoading(false); }
   }
 
   return (
@@ -99,13 +138,14 @@ export default function App() {
             isLookupLoading={isLookupLoading}
           />
           {error && <p className="error-message">{error}</p>}
-          {report.dataNotes.length > 0 && (
+          {(report.dataNotes.length > 0 || chipWarning) && (
             <section className="panel notes-panel">
               <h2>資料備註</h2>
               <ul>
                 {report.dataNotes.map((note) => (
                   <li key={note}>{note}</li>
                 ))}
+                {chipWarning && <li>{chipWarning}</li>}
               </ul>
             </section>
           )}
@@ -114,6 +154,7 @@ export default function App() {
         <section className="content-grid">
           <ResultSummary report={report} />
           <TraderDecisionPanel decision={traderDecision} />
+          <ChipFundamentalPanel report={chipReport} onLoadChip={customRows ? handleLoadChip : undefined} isLoadingChip={isChipLoading} />
           {report.rows.length > 0 && <PriceVolumeChart rows={report.rows} />}
           <RuleDetails report={report} />
           <SignalValidationPanel backtest={backtest} />

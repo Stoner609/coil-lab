@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildTraderDecision } from './decision';
-import type { IndicatorSnapshot, MomentumReport } from './types';
+import type { ChipFlowReport, FundamentalSnapshot, IndicatorSnapshot, MomentumReport } from './types';
 
 function snapshot(overrides: Partial<IndicatorSnapshot> = {}): IndicatorSnapshot {
   return {
@@ -36,9 +36,40 @@ function report(overrides: Partial<MomentumReport> = {}): MomentumReport {
     relativeStrengthAvailable: true,
     groups: [],
     riskNotes: [],
-    dataNotes: ['已納入 TWSE 加權指數資料計算相對強度。'],
+    dataNotes: ['已納入 TAIEX 資料計算相對強度。'],
     rows: [],
     ...overrides,
+  };
+}
+
+function chipReport(overrides: Partial<ChipFlowReport> = {}): ChipFlowReport {
+  return {
+    classification: 'supportive',
+    score: 20,
+    maxScore: 30,
+    rules: [],
+    confidenceNotes: ['投信 10 日買超 800 股。'],
+    blockers: [],
+    unavailableData: [],
+    latestRow: null,
+    fundamental: unavailableFundamental('2330'),
+    ...overrides,
+  };
+}
+
+function unavailableFundamental(stockCode: string): FundamentalSnapshot {
+  return {
+    stockCode,
+    monthlyRevenueAvailable: false,
+    latestRevenueMonth: null,
+    revenueYoYPct: null,
+    revenueMoMPct: null,
+    trailingThreeMonthRevenueYoYPct: null,
+    quarterlyFinancialsAvailable: false,
+    latestQuarter: null,
+    eps: null,
+    grossMarginPct: null,
+    operatingMarginPct: null,
   };
 }
 
@@ -76,5 +107,25 @@ describe('buildTraderDecision', () => {
     expect(decision.unavailableData).toContain('相對強度資料不可用');
     expect(decision.unavailableData).toContain('基本面資料尚未接入');
     expect(decision.unavailableData).toContain('籌碼資料尚未接入');
+  });
+
+  it('adds supportive chip-flow notes to confidence notes', () => {
+    const decision = buildTraderDecision(report(), snapshot(), chipReport());
+
+    expect(decision.confidenceNotes.join(' ')).toContain('投信 10 日買超');
+  });
+
+  it('adds risky chip-flow notes to blockers', () => {
+    const decision = buildTraderDecision(
+      report(),
+      snapshot(),
+      chipReport({
+        classification: 'risky',
+        confidenceNotes: [],
+        blockers: ['融資 10 日變化 3000 股。'],
+      }),
+    );
+
+    expect(decision.blockers.join(' ')).toContain('融資');
   });
 });

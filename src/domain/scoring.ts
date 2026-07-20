@@ -134,7 +134,7 @@ export function scoreTechnicals(snapshot: IndicatorSnapshot, indexSnapshot?: Ind
     groups: [trend, base, volume, relativeStrength, riskGroup],
     riskNotes,
     dataNotes: indexSnapshot
-      ? ['已納入 TWSE 加權指數資料計算相對強度。']
+      ? ['已納入 TAIEX 資料計算相對強度。']
       : ['未提供大盤資料；相對強度已標記為 unavailable，總分以 85 分技術分數正規化。'],
   };
 }

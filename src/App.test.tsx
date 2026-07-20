@@ -3,9 +3,12 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import App from './App';
 
-vi.mock('./domain/marketData', () => ({
+vi.mock('./domain/stockCode', () => ({
   normalizeStockCode: (stockCode: string) => stockCode.trim(),
-  fetchTwseStockRows: vi.fn(async () =>
+}));
+
+vi.mock('./domain/finMindData', () => ({
+  fetchFinMindStockRows: vi.fn(async () =>
     Array.from({ length: 140 }, (_, index) => {
       const date = new Date(Date.UTC(2025, 0, index + 1)).toISOString().slice(0, 10);
       const price = 100 + index * 0.5;
@@ -19,7 +22,7 @@ vi.mock('./domain/marketData', () => ({
       };
     }),
   ),
-  fetchTwseIndexRows: vi.fn(async () =>
+  fetchFinMindIndexRows: vi.fn(async () =>
     Array.from({ length: 140 }, (_, index) => {
       const date = new Date(Date.UTC(2025, 0, index + 1)).toISOString().slice(0, 10);
       const price = 90 + index * 0.1;
@@ -35,6 +38,10 @@ vi.mock('./domain/marketData', () => ({
   ),
 }));
 
+vi.mock('./domain/fundamentalData', () => ({
+  fetchFinMindFundamental: vi.fn(async () => ({ stockCode: '2330', monthlyRevenueAvailable: true, latestRevenueMonth: '2026-06-01', revenueYoYPct: 10, revenueMoMPct: 2, trailingThreeMonthRevenueYoYPct: 8, quarterlyFinancialsAvailable: true, latestQuarter: '2026-03-31', eps: 4, grossMarginPct: 25, operatingMarginPct: 12 })),
+}));
+
 describe('App', () => {
   it('renders the workbench with a score and rule details', () => {
     render(<App />);
@@ -43,6 +50,7 @@ describe('App', () => {
     expect(screen.getByLabelText('輸入資料')).toBeInTheDocument();
     expect(screen.getByLabelText('結果摘要')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '交易決策輔助' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '籌碼與基本面' })).toBeInTheDocument();
     expect(screen.getByLabelText('條件明細')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '訊號驗證回測' })).toBeInTheDocument();
     expect(screen.getByLabelText('樣本驗證')).toBeInTheDocument();
@@ -78,7 +86,12 @@ describe('App', () => {
     await user.type(screen.getByLabelText('股票代號'), '2330');
     await user.click(screen.getByRole('button', { name: '查詢' }));
 
-    expect(await screen.findByText('2330 TWSE')).toBeInTheDocument();
+    const finMind = await import('./domain/finMindData');
+
+    expect(await screen.findByText('2330 FinMind')).toBeInTheDocument();
     expect(await screen.findByText('已納入')).toBeInTheDocument();
+    expect(await screen.findByText('為減少資料請求，籌碼資料未自動載入。')).toBeInTheDocument();
+    expect(finMind.fetchFinMindStockRows).toHaveBeenCalledTimes(1);
+    expect(finMind.fetchFinMindIndexRows).toHaveBeenCalledTimes(1);
   });
 });

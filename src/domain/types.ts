@@ -128,3 +128,57 @@ export interface SignalBacktestReport {
   summary: SignalBacktestSummary;
   notes: string[];
 }
+
+export type ChipClassification = 'supportive' | 'mixed' | 'risky' | 'unavailable';
+
+export interface ChipFlowRow {
+  date: string;
+  stockCode: string;
+  foreignNetBuyShares: number | null;
+  investmentTrustNetBuyShares: number | null;
+  dealerNetBuyShares: number | null;
+  totalInstitutionNetBuyShares: number | null;
+  marginBuyBalance: number | null;
+  marginBuyChange: number | null;
+  shortSellBalance: number | null;
+  shortSellChange: number | null;
+}
+
+export interface ChipFlowParseResult {
+  rows: ChipFlowRow[];
+  warnings: string[];
+}
+
+export interface ChipRuleResult {
+  id: string;
+  label: string;
+  status: RuleStatus;
+  scoreImpact: number;
+  explanation: string;
+}
+
+export interface FundamentalSnapshot {
+  stockCode: string;
+  monthlyRevenueAvailable: boolean;
+  latestRevenueMonth: string | null;
+  revenueYoYPct: number | null;
+  revenueMoMPct: number | null;
+  trailingThreeMonthRevenueYoYPct: number | null;
+  quarterlyFinancialsAvailable: boolean;
+  latestQuarter: string | null;
+  eps: number | null;
+  grossMarginPct: number | null;
+  operatingMarginPct: number | null;
+}
+
+export interface ChipFlowReport {
+  classification: ChipClassification;
+  score: number;
+  maxScore: number;
+  rules: ChipRuleResult[];
+  confidenceNotes: string[];
+  blockers: string[];
+  unavailableData: string[];
+  latestRow: ChipFlowRow | null;
+  fundamental: FundamentalSnapshot;
+}

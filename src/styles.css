@@ -229,7 +229,8 @@ dd {
 }
 
 .trader-decision-panel,
-.signal-validation-panel {
+.signal-validation-panel,
+.chip-fundamental-panel {
   display: grid;
   gap: 14px;
 }
@@ -284,6 +285,22 @@ dd {
 .setup-state-extended,
 .setup-state-avoid {
   background: #fff0f0;
+}
+
+.chip-state-supportive {
+  background: #edf8f1;
+}
+
+.chip-state-mixed {
+  background: #fff8e5;
+}
+
+.chip-state-risky {
+  background: #fff0f0;
+}
+
+.chip-state-unavailable {
+  background: #eef2f5;
 }
 
 .note-block h3 {

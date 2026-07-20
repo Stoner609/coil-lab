@@ -1,21 +1,25 @@
-import type { IndicatorSnapshot, MomentumReport, RiskRewardEstimate, SetupState, TraderDecision } from './types';
+import type { ChipFlowReport, IndicatorSnapshot, MomentumReport, RiskRewardEstimate, SetupState, TraderDecision } from './types';
 
 const MAX_ACTIONABLE_DISTANCE_FROM_MA60 = 18;
 const MAX_WATCH_DISTANCE_FROM_MA60 = 28;
 const MAX_ACTIONABLE_RISK_PCT = 12;
 const MIN_REWARD_RISK_RATIO = 1.5;
 
-export function buildTraderDecision(report: MomentumReport, snapshot: IndicatorSnapshot): TraderDecision {
+export function buildTraderDecision(
+  report: MomentumReport,
+  snapshot: IndicatorSnapshot,
+  chipReport?: ChipFlowReport,
+): TraderDecision {
   const riskReward = estimateRiskReward(snapshot);
-  const blockers = buildBlockers(report, snapshot, riskReward);
+  const blockers = mergeNotes(buildBlockers(report, snapshot, riskReward), chipReport?.blockers ?? []);
   const setupState = classifySetup(report, snapshot, riskReward, blockers);
 
   return {
     setupState,
     headline: headlineFor(setupState),
-    confidenceNotes: buildConfidenceNotes(report, snapshot, riskReward),
+    confidenceNotes: mergeNotes(buildConfidenceNotes(report, snapshot, riskReward), chipReport?.confidenceNotes ?? []),
     blockers,
-    unavailableData: buildUnavailableData(report),
+    unavailableData: mergeNotes(buildUnavailableData(report, chipReport), chipReport?.unavailableData ?? []),
     riskReward,
   };
 }
@@ -109,8 +113,9 @@ function buildConfidenceNotes(
   return notes;
 }
 
-function buildUnavailableData(report: MomentumReport): string[] {
-  const unavailable = ['基本面資料尚未接入', '籌碼資料尚未接入', '產業同儕資料尚未接入'];
+function buildUnavailableData(report: MomentumReport, chipReport?: ChipFlowReport): string[] {
+  const unavailable = ['基本面資料尚未接入', '產業同儕資料尚未接入'];
+  if (!chipReport || chipReport.classification === 'unavailable') unavailable.splice(1, 0, '籌碼資料尚未接入');
   if (!report.relativeStrengthAvailable) unavailable.unshift('相對強度資料不可用');
   return unavailable;
 }
@@ -124,4 +129,8 @@ function headlineFor(setupState: SetupState): string {
 
 function round(value: number): number {
   return Number(value.toFixed(2));
+}
+
+function mergeNotes(...groups: string[][]): string[] {
+  return Array.from(new Set(groups.flat()));
 }
